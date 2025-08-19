@@ -370,12 +370,20 @@ workflow METAMICROBES {
             sort: true
         )
     )
+    ch_multiqc_replace_names = params.multiqc_replace_names ?
+        Channel.fromPath(params.multiqc_replace_names, checkIfExists: true) :
+        Channel.empty()
+    ch_multiqc_sample_names = params.multiqc_sample_names ?
+        Channel.fromPath(params.multiqc_sample_names, checkIfExists: true) :
+        Channel.empty()
 
     MULTIQC (
         ch_multiqc_files.collect(),
         ch_multiqc_config.toList(),
         ch_multiqc_custom_config.toList(),
-        ch_multiqc_logo.toList()
+        ch_multiqc_logo.toList(),
+        ch_multiqc_replace_names.toList(),
+        ch_multiqc_sample_names.toList()
     )
 
     emit:
