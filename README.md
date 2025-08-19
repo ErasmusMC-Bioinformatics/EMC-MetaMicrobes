@@ -1,6 +1,8 @@
+# EMC/metamicrobes
+
 ## Introduction
 
-**emc/cancermicro** is a bioinformatics pipeline that ...
+**EMC/metamicrobes** is a bioinformatics pipeline that ...
 
 <!-- TODO nf-core:
    Complete this sentence with a 2-3 sentence summary of what types of data the pipeline ingests, a brief overview of the
@@ -9,11 +11,8 @@
 -->
 
 <!-- TODO nf-core: Include a figure that guides the user through the major workflow steps. Many nf-core
-     workflows use the "tube map" design for that. See https://nf-co.re/docs/contributing/design_guidelines#examples for examples.   -->
-<!-- TODO nf-core: Fill in short bullet-pointed list of the default steps in the pipeline -->
-
-1. Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
-2. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
+     workflows use the "tube map" design for that. See https://nf-co.re/docs/guidelines/graphic_design/workflow_diagrams#examples for examples.   -->
+<!-- TODO nf-core: Fill in short bullet-pointed list of the default steps in the pipeline -->1. Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))2. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
 
 ## Usage
 
@@ -41,19 +40,18 @@ Now, you can run the pipeline using:
 <!-- TODO nf-core: update the following command to include all required parameters for a minimal example -->
 
 ```bash
-nextflow run emc/cancermicro \
+nextflow run EMC/metamicrobes \
    -profile <docker/singularity/.../institute> \
    --input samplesheet.csv \
    --outdir <OUTDIR>
 ```
 
 > [!WARNING]
-> Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_;
-> see [docs](https://nf-co.re/usage/configuration#custom-configuration-files).
+> Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/usage/getting_started/configuration#custom-configuration-files).
 
 ## Credits
 
-emc/cancermicro was originally written by Birgit Rijvers.
+EMC/metamicrobes was originally written by Birgit Rijvers, Willem de Koning.
 
 We thank the following people for their extensive assistance in the development of this pipeline:
 
@@ -66,13 +64,13 @@ If you would like to contribute to this pipeline, please see the [contributing g
 ## Citations
 
 <!-- TODO nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi and badge at the top of this file. -->
-<!-- If you use emc/cancermicro for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->
+<!-- If you use EMC/metamicrobes for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->
 
 <!-- TODO nf-core: Add bibliography of tools and data used in your pipeline -->
 
 An extensive list of references for the tools used by the pipeline can be found in the [`CITATIONS.md`](CITATIONS.md) file.
 
-This pipeline uses code and infrastructure developed and maintained by the [nf-core](https://nf-co.re) community, reused here under the [MIT license](https://github.com/nf-core/tools/blob/master/LICENSE).
+This pipeline uses code and infrastructure developed and maintained by the [nf-core](https://nf-co.re) community, reused here under the [MIT license](https://github.com/nf-core/tools/blob/main/LICENSE).
 
 > **The nf-core framework for community-curated bioinformatics pipelines.**
 >
