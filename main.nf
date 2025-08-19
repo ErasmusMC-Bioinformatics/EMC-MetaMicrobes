@@ -18,7 +18,6 @@ nextflow.enable.dsl = 2
 include { METAMICROBES  } from './workflows/metamicrobes'
 include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_metamicrobes_pipeline'
 include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_metamicrobes_pipeline'
-
 include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_metamicrobes_pipeline'
 
 /*
@@ -30,7 +29,14 @@ include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_meta
 // TODO nf-core: Remove this line if you don't need a FASTA file
 //   This is an example of how to use getGenomeAttribute() to fetch parameters
 //   from igenomes.config using `--genome`
-params.fasta = getGenomeAttribute('fasta')
+// Resolve ch_fasta based on fasta or genome
+if (params.fasta) {
+    pass
+} else if (params.genome) {
+    params.fasta = getGenomeAttribute('fasta')
+} else {
+    error "Missing reference genome. Please provide either --fasta or --genome"
+}
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -48,11 +54,13 @@ workflow EMC_METAMICROBES {
 
     main:
 
+    ch_fasta = params.fasta ? Channel.fromPath(params.fasta).map{ it -> [ [id:it.baseName], it ] }.collect() : Channel.empty()
     //
     // WORKFLOW: Run pipeline
     //
     METAMICROBES (
-        samplesheet
+        samplesheet,
+        ch_fasta
     )
 
     emit:

@@ -31,6 +31,7 @@ include { paramsSummaryMap       } from 'plugin/nf-validation'
 include { paramsSummaryMultiqc   } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_metamicrobes_pipeline'
+include { getGenomeAttribute      } from '../subworkflows/local/utils_nfcore_metamicrobes_pipeline'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -41,14 +42,6 @@ include { QIIME2 as QIIME2_KRAKEN2                            } from '../subwork
 include { QIIME2 as QIIME2_BRACKEN                            } from '../subworkflows/local/qiime2'
 
 /*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    VALIDATE PARAMS
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-if(params.fasta){
-    ch_fasta = Channel.fromPath(params.fasta, checkIfExists: true).collect()
-        .map{ it -> [[id:it[0].getSimpleName()], it[0]]}
-}
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -60,6 +53,7 @@ workflow METAMICROBES {
 
     take:
     ch_samplesheet // channel: samplesheet read in from --input
+    ch_fasta       // channel: reference genome FASTA file, if provided
 
     main:
 
@@ -115,7 +109,7 @@ workflow METAMICROBES {
         false
     )
     ch_versions = ch_versions.mix(BWAMEM2_MEM.out.versions.first())
-    
+
     //
     // Module: Run Samtools flagstat
     //
@@ -151,18 +145,18 @@ workflow METAMICROBES {
     // )
     // ch_versions = ch_versions.mix(SEQKIT_FQ2FA.out.versions)
 
-    // // 
+    // //
     // // MODULE: Download and untar CARD database for RGI
     // //
-    // UNTAR( 
-    //     [ [], file('https://card.mcmaster.ca/latest/data', checkIfExists: true) ] 
+    // UNTAR(
+    //     [ [], file('https://card.mcmaster.ca/latest/data', checkIfExists: true) ]
     // )
     // ch_versions = ch_versions.mix(UNTAR.out.versions)
 
     // // Create channel with unzipped RGI database
     // rgi_db = UNTAR.out.untar.map{ it[1] }
 
-    // // 
+    // //
     // // MODULE: Run RGI Card Annotation
     // //
     // RGI_CARDANNOTATION (
@@ -184,7 +178,7 @@ workflow METAMICROBES {
     ch_fargene_classes = Channel.fromList(params.fargene_hmmmodel.tokenize(','))
 
     // Format input for fARGene with uncompressed reads
-    ch_fargene_input = SAMTOOLS_FASTQ_NOGZIP.out.fastq 
+    ch_fargene_input = SAMTOOLS_FASTQ_NOGZIP.out.fastq
                         .combine(ch_fargene_classes)
                         .map {
                             meta, fastas, hmm_class ->
@@ -196,15 +190,15 @@ workflow METAMICROBES {
                             fastas: [ it[0], it[1] ]
                             hmmclass: it[2]
                         }
-    // 
+    //
     // MODULE: Run FARGene
     //
     FARGENE (
-        ch_fargene_input.fastas, 
+        ch_fargene_input.fastas,
         ch_fargene_input.hmmclass
     )
     ch_versions = ch_versions.mix(FARGENE.out.versions)
-    
+
     // Check if Kraken2 database is provided
     if (!params.kraken2_db) {
         //
@@ -231,7 +225,7 @@ workflow METAMICROBES {
         false
     )
     ch_versions = ch_versions.mix(KRAKEN2_KRAKEN2.out.versions.first())
-    
+
     //
     // MODULE: Run KrakenTools kreport2krona on Kraken2 outputs for text report required for Krona plot
     //
@@ -266,7 +260,7 @@ workflow METAMICROBES {
         ch_kraken2_db_path = ch_kraken2_db.map{it}
         ch_bracken_index = ch_kraken2_db_path.map { db_path -> tuple([id: 'kraken2_db_for_bracken'], db_path) }
         //
-        // MODULE: Run Bracken build 
+        // MODULE: Run Bracken build
         //
         BRACKEN_BUILD (
             ch_bracken_index
@@ -278,7 +272,7 @@ workflow METAMICROBES {
             // Use provided Bracken database
             ch_bracken_db = Channel.value([params.bracken_db])
     }
-    
+
     //
     // MODULE: Run Bracken
     //
@@ -308,7 +302,7 @@ workflow METAMICROBES {
     // Create channel with Kraken2 reports list
     ch_kreports = KRAKEN2_KRAKEN2.out.report.map {it[1]}.toList()
 
-    
+
     // Create channel with Bracken reports list
     ch_br_kreports = BRACKEN_BRACKEN.out.txt.map { it[1] }.toList()
 
