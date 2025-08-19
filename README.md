@@ -1,3 +1,5 @@
+# EMC/metamicrobes
+
 ## Introduction
 
 **EMC/MetaMicrobes** is a bioinformatics pipeline that analyzes microbial signatures and AMR genes in metagenomic or metatranscriptomic data. 
@@ -116,7 +118,7 @@ If you would like to contribute to this pipeline, please see the [contributing g
 
 A list of references for the tools used by the pipeline can be found in the [`CITATIONS.md`](CITATIONS.md) file.
 
-This pipeline uses code and infrastructure developed and maintained by the [nf-core](https://nf-co.re) community, reused here under the [MIT license](https://github.com/nf-core/tools/blob/master/LICENSE).
+This pipeline uses code and infrastructure developed and maintained by the [nf-core](https://nf-co.re) community, reused here under the [MIT license](https://github.com/nf-core/tools/blob/main/LICENSE).
 
 > **The nf-core framework for community-curated bioinformatics pipelines.**
 >
