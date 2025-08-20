@@ -1,6 +1,6 @@
 process BRACKEN_BUILD {
     tag "$meta.id"
-    label 'process_high'
+    label 'build_database'
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
